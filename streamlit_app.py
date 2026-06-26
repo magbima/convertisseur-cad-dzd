@@ -1,12 +1,12 @@
 import streamlit as st
 
+# ✅ CONFIG
 st.set_page_config(
     page_title="CAD ↔ DZD Premium",
-    page_icon="💎",
     layout="centered"
 )
 
-# ✅ STYLE ULTRA CLEAN
+# ✅ STYLE
 st.markdown("""
 <style>
 .stApp {
@@ -14,31 +14,30 @@ st.markdown("""
     color: white;
 }
 
-/* TITRE */
 h1 {
     text-align: center;
     color: #00C853;
 }
 
-/* ZONE INPUT */
-.container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+/* INPUT */
+input {
+    text-align: center !important;
+    font-size: 18px !important;
 }
 
-/* CARD */
+/* CARD RESULT */
 .card {
     background: #121826;
     padding: 25px;
     border-radius: 15px;
     margin-top: 20px;
     text-align: center;
+    box-shadow: 0px 0px 25px rgba(0,200,83,0.08);
 }
 
-/* RESULT */
+/* VALUE */
 .value {
-    font-size: 32px;
+    font-size: 34px;
     font-weight: bold;
     color: #00E676;
 }
@@ -48,11 +47,11 @@ h1 {
     color: #888;
 }
 
-/* FLECHE */
+/* ARROW */
 .arrow {
     text-align: center;
     font-size: 30px;
-    margin-top: 30px;
+    margin-top: 35px;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -63,8 +62,8 @@ st.title("Convertisseur CAD ↔ DZD")
 # ✅ TAUX
 taux = st.number_input("Taux", value=170.0)
 
-# ✅ CHAMPS FACE À FACE
-col1, col2, col3 = st.columns([3, 1, 3])
+# ✅ ZONE FACE-À-FACE
+col1, col2, col3 = st.columns([3,1,3])
 
 with col1:
     cad_input = st.number_input("CAD", min_value=0.0, value=100.0, key="cad")
@@ -76,34 +75,33 @@ with col3:
     dzd_input = st.number_input("DZD", min_value=0.0, value=0.0, key="dzd")
 
 # ✅ LOGIQUE INTELLIGENTE
-if cad_input != 0:
-    dzd = cad_input * taux
+if cad_input > 0:
     cad = cad_input
-elif dzd_input != 0:
-    cad = dzd_input / taux if taux != 0 else 0
+    dzd = cad * taux
+elif dzd_input > 0:
     dzd = dzd_input
+    cad = dzd / taux if taux != 0 else 0
 else:
     cad = 0
     dzd = 0
 
-# ✅ AFFICHAGE
-st.markdown(f"""
-<div class="card">
-    <div class="value">{int(dzd):,} DZD</div>
-    <div class="label">Montant en dinars</div>
-</div>
-""", unsafe_allow_html=True)
+# ✅ FORMATAGE PRO
+dzd_affiche = f"{int(dzd):,} DZD"
+cad_affiche = f"{int(cad):,} CAD"
 
-st.markdown(f"""
-<div class="card">
-    <div class="value">{int(cad):,} CAD</div>
-    <div class="label">Montant en dollars canadiens</div>
-</div>
-""", unsafe_allow_html=True)
+# ✅ AFFICHAGE
+st.markdown(
+    f"<div class='card'><div class='value'>{dzd_affiche}</div><div class='label'>Montant en dinars algériens</div></div>",
+    unsafe_allow_html=True
+)
+
+st.markdown(
+    f"<div class='card'><div class='value'>{cad_affiche}</div><div class='label'>Montant en dollars canadiens</div></div>",
+    unsafe_allow_html=True
+)
 
 # ✅ SIGNATURE
 st.markdown(
     "<hr><center style='color:#00C853;'>💻 Développé par M. Madani</center>",
     unsafe_allow_html=True
 )
-``
