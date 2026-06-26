@@ -41,33 +41,32 @@ h1 {
     margin-bottom: 6px;
 }
 
-.input-card {
-    background: #FFFFFF;
-    border-radius: 12px;
-    padding: 8px 12px;
-    border: 2px solid #2E7D32;
-    margin-bottom: 18px;
-}
-
 .currency-badge {
+    background: transparent;
+    color: white;
     font-size: 22px;
     font-weight: 800;
-    color: #000000;
-    text-align: center;
-    padding-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding-top: 12px;
+}
+
+.currency-badge img {
+    width: 30px;
+    height: 22px;
+    border-radius: 3px;
+    object-fit: cover;
 }
 
 input {
-    font-size: 28px !important;
+    font-size: 26px !important;
     font-weight: 800 !important;
     color: #000000 !important;
     background: #FFFFFF !important;
     border: none !important;
     box-shadow: none !important;
-}
-
-div[data-testid="stTextInput"] {
-    margin-bottom: 0px;
 }
 
 .arrow-circle {
@@ -81,8 +80,8 @@ div[data-testid="stTextInput"] {
     font-size: 24px;
     font-weight: bold;
     margin: auto;
-    margin-top: 8px;
-    margin-bottom: 20px;
+    margin-top: 10px;
+    margin-bottom: 22px;
 }
 
 .result-card {
@@ -227,7 +226,15 @@ with col1:
     )
 
 with col2:
-    st.markdown("<div class='currency-badge'>🇩🇿 DZD</div>", unsafe_allow_html=True)
+    st.markdown(
+        """
+        <div class='currency-badge'>
+            <img src='https://flagcdn.com/w40/dz.png'>
+            <span>DZD</span>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 # FLÈCHE
 st.markdown("<div class='arrow-circle'>↕</div>", unsafe_allow_html=True)
@@ -246,7 +253,15 @@ with col3:
     )
 
 with col4:
-    st.markdown("<div class='currency-badge'>🇨🇦 CAD</div>", unsafe_allow_html=True)
+    st.markdown(
+        """
+        <div class='currency-badge'>
+            <img src='https://flagcdn.com/w40/ca.png'>
+            <span>CAD</span>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 # RÉSULTATS
 dzd_value = parse_number(st.session_state.dzd)
