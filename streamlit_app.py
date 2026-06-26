@@ -1,13 +1,12 @@
 import streamlit as st
 
-# ✅ CONFIGURATION
 st.set_page_config(
     page_title="CAD ↔ DZD Premium",
     page_icon="💎",
     layout="centered"
 )
 
-# ✅ STYLE PREMIUM (banque / fintech)
+# ✅ STYLE ULTRA CLEAN
 st.markdown("""
 <style>
 .stApp {
@@ -18,87 +17,93 @@ st.markdown("""
 /* TITRE */
 h1 {
     text-align: center;
-    font-size: 34px;
     color: #00C853;
-    margin-bottom: 20px;
 }
 
-/* CARTES */
+/* ZONE INPUT */
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* CARD */
 .card {
     background: #121826;
     padding: 25px;
     border-radius: 15px;
     margin-top: 20px;
     text-align: center;
-    box-shadow: 0px 0px 25px rgba(0, 200, 83, 0.08);
 }
 
-/* VALEUR PRINCIPALE */
+/* RESULT */
 .value {
-    font-size: 34px;
+    font-size: 32px;
     font-weight: bold;
     color: #00E676;
 }
 
 /* LABEL */
 .label {
-    font-size: 14px;
     color: #888;
-    margin-top: 5px;
 }
 
-/* INPUT */
-input {
-    text-align: center !important;
-    font-size: 18px !important;
+/* FLECHE */
+.arrow {
+    text-align: center;
+    font-size: 30px;
+    margin-top: 30px;
 }
 </style>
 """, unsafe_allow_html=True)
 
 # ✅ TITRE
-st.title("💱 Convertisseur CAD ↔ DZD")
+st.title("Convertisseur CAD ↔ DZD")
 
-# ✅ ENTRÉES (design propre en 2 colonnes)
-col1, col2 = st.columns(2)
+# ✅ TAUX
+taux = st.number_input("Taux", value=170.0)
+
+# ✅ CHAMPS FACE À FACE
+col1, col2, col3 = st.columns([3, 1, 3])
 
 with col1:
-    montant_cad = st.number_input(
-        "💰 Montant CAD",
-        min_value=0.0,
-        value=100.0,
-        step=10.0
-    )
+    cad_input = st.number_input("CAD", min_value=0.0, value=100.0, key="cad")
 
 with col2:
-    taux = st.number_input(
-        " Taux",
-        value=170.0,
-        step=1.0
-    )
+    st.markdown("<div class='arrow'>↔️</div>", unsafe_allow_html=True)
 
-# ✅ CALCUL AUTOMATIQUE
-dzd = montant_cad * taux
-cad_inverse = dzd / taux if taux != 0 else 0
+with col3:
+    dzd_input = st.number_input("DZD", min_value=0.0, value=0.0, key="dzd")
 
-# ✅ AFFICHAGE PREMIUM (CARTE 1)
+# ✅ LOGIQUE INTELLIGENTE
+if cad_input != 0:
+    dzd = cad_input * taux
+    cad = cad_input
+elif dzd_input != 0:
+    cad = dzd_input / taux if taux != 0 else 0
+    dzd = dzd_input
+else:
+    cad = 0
+    dzd = 0
+
+# ✅ AFFICHAGE
 st.markdown(f"""
 <div class="card">
-    <div class="value">{dzd:,.2f} DZD</div>
-    <div class="label">Équivalent en dinars algériens</div>
+    <div class="value">{int(dzd):,} DZD</div>
+    <div class="label">Montant en dinars</div>
 </div>
 """, unsafe_allow_html=True)
 
-# ✅ AFFICHAGE PREMIUM (CARTE 2)
 st.markdown(f"""
 <div class="card">
-    <div class="value">{int(cad_inverse):,} CAD</div>
-    <div class="label">Conversion inverse immédiate</div>
+    <div class="value">{int(cad):,} CAD</div>
+    <div class="label">Montant en dollars canadiens</div>
 </div>
 """, unsafe_allow_html=True)
-
 
 # ✅ SIGNATURE
 st.markdown(
     "<hr><center style='color:#00C853;'>💻 Développé par M. Madani</center>",
     unsafe_allow_html=True
 )
+``
