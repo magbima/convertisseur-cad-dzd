@@ -1,58 +1,106 @@
 import streamlit as st
 
-# ✅ Configuration de la page py -m streamlit run app_web.py
+# ✅ CONFIGURATION
 st.set_page_config(
-    page_title="Convertisseur CAD → DZD",
+    page_title="CAD ↔ DZD Premium",
+    page_icon="💎",
     layout="centered"
 )
 
-# ✅ Thème sombre
+# ✅ STYLE PREMIUM (banque / fintech)
 st.markdown("""
 <style>
 .stApp {
-    background-color: #0E1117;
+    background: linear-gradient(180deg, #0B0F1A, #070A12);
     color: white;
 }
+
+/* TITRE */
 h1 {
     text-align: center;
+    font-size: 34px;
     color: #00C853;
+    margin-bottom: 20px;
 }
-.stNumberInput label {
-    color: #BBBBBB;
+
+/* CARTES */
+.card {
+    background: #121826;
+    padding: 25px;
+    border-radius: 15px;
+    margin-top: 20px;
+    text-align: center;
+    box-shadow: 0px 0px 25px rgba(0, 200, 83, 0.08);
 }
-.stButton>button {
-    background-color: #0078D7;
-    color: white;
-    border-radius: 8px;
-    padding: 10px;
+
+/* VALEUR PRINCIPALE */
+.value {
+    font-size: 34px;
     font-weight: bold;
+    color: #00E676;
+}
+
+/* LABEL */
+.label {
+    font-size: 14px;
+    color: #888;
+    margin-top: 5px;
+}
+
+/* INPUT */
+input {
+    text-align: center !important;
+    font-size: 18px !important;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# ✅ Taux par défaut
-TAUX_PAR_DEFAUT = 170.0
+# ✅ TITRE
+st.title("💱 Convertisseur CAD ↔ DZD")
 
-# ✅ Titre
-st.title("💱 Convertisseur CAD → DZD")
-
-# ✅ Entrées utilisateur
-montant = st.number_input("💰 Montant CAD", min_value=0.0, step=10.0)
-taux = st.number_input("📊 Taux (modifiable)", value=TAUX_PAR_DEFAUT)
-
-# ✅ Boutons
+# ✅ ENTRÉES (design propre en 2 colonnes)
 col1, col2 = st.columns(2)
 
 with col1:
-    if st.button("Convertir"):
-        resultat = montant * taux
-        st.success(f"💵 {resultat:,.2f} DZD")
+    montant_cad = st.number_input(
+        "💰 Montant CAD",
+        min_value=0.0,
+        value=100.0,
+        step=10.0
+    )
 
 with col2:
-    if st.button("Réinitialiser taux"):
-        st.rerun()
+    taux = st.number_input(
+        "📊 Taux",
+        value=170.0,
+        step=1.0
+    )
 
-# ✅ Signature visible
+# ✅ CALCUL AUTOMATIQUE
+dzd = montant_cad * taux
+cad_inverse = dzd / taux if taux != 0 else 0
+
+# ✅ AFFICHAGE PREMIUM (CARTE 1)
+st.markdown(f"""
+<div class="card">
+    <div class="value">{dzd:,.2f} DZD</div>
+    <div class="label">Équivalent en dinars algériens</div>
+</div>
+""", unsafe_allow_html=True)
+
+# ✅ AFFICHAGE PREMIUM (CARTE 2)
+st.markdown(f"""
+<div class="card">
+    <div class="value">{cad_inverse:,.2f} CAD</div>
+    <div class="label">Conversion inverse immédiate</div>
+</div>
+""", unsafe_allow_html=True)
+
+# ✅ RESET
+if st.button("🔄 Réinitialiser taux"):
+    st.rerun()
+
+# ✅ SIGNATURE
 st.markdown(
     "<hr><center style='color:#00C853;'>💻 Développé par M. Madani</center>",
     unsafe_allow_html=True
