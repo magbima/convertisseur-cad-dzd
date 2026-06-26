@@ -1,16 +1,16 @@
 import streamlit as st
 
 # =========================
-# CONFIGURATION
+# CONFIG
 # =========================
 st.set_page_config(
-    page_title="CAD ↔ DZD Premium",
+    page_title="Convertisseur CAD ↔ DZD",
     page_icon="💱",
     layout="centered"
 )
 
 # =========================
-# STYLE PREMIUM
+# STYLE
 # =========================
 st.markdown("""
 <style>
@@ -19,117 +19,165 @@ st.markdown("""
     color: white;
 }
 
-/* TITRE */
 h1 {
     text-align: center;
     color: #00E676;
-    font-size: 36px;
+    font-size: 34px;
     font-weight: 800;
 }
 
-/* LABELS VISIBLES */
-.field-label {
-    color: #FFFFFF;
+.rate-box {
+    text-align: center;
+    color: #DDE6F0;
     font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 25px;
+}
+
+.field-title {
+    color: #FFFFFF;
+    font-size: 16px;
     font-weight: 700;
     margin-bottom: 6px;
 }
 
-/* TEXTE INFO */
-.info-rate {
+.input-card {
+    background: #FFFFFF;
+    border-radius: 12px;
+    padding: 8px 12px;
+    border: 2px solid #2E7D32;
+    margin-bottom: 18px;
+}
+
+.currency-badge {
+    font-size: 22px;
+    font-weight: 800;
+    color: #000000;
     text-align: center;
-    color: #AAB2C0;
-    font-size: 14px;
+    padding-top: 10px;
+}
+
+input {
+    font-size: 28px !important;
+    font-weight: 800 !important;
+    color: #000000 !important;
+    background: #FFFFFF !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+div[data-testid="stTextInput"] {
+    margin-bottom: 0px;
+}
+
+.arrow-circle {
+    background: #8DEB61;
+    color: #000000;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 48px;
+    font-size: 24px;
+    font-weight: bold;
+    margin: auto;
+    margin-top: 8px;
     margin-bottom: 20px;
 }
 
-/* INPUTS */
-input {
-    text-align: center !important;
-    font-size: 22px !important;
-    font-weight: bold !important;
-}
-
-/* CARTES */
-.card {
+.result-card {
     background: #121826;
-    padding: 24px;
-    border-radius: 18px;
-    margin-top: 22px;
+    padding: 22px;
+    border-radius: 16px;
+    margin-top: 18px;
     text-align: center;
     box-shadow: 0px 0px 25px rgba(0, 230, 118, 0.10);
 }
 
-/* VALEURS */
-.value {
-    font-size: 34px;
+.result-value {
+    font-size: 30px;
     font-weight: 800;
     color: #00E676;
 }
 
-/* SOUS-TITRES */
-.label {
+.result-label {
     color: #AAB2C0;
     font-size: 14px;
     margin-top: 6px;
-}
-
-/* FLÈCHE */
-.arrow {
-    text-align: center;
-    font-size: 32px;
-    margin-top: 38px;
 }
 </style>
 """, unsafe_allow_html=True)
 
 # =========================
-# VARIABLES SESSION
-# =========================
-if "taux" not in st.session_state:
-    st.session_state.taux = 170.0
-
-if "cad" not in st.session_state:
-    st.session_state.cad = 100.0
-
-if "dzd" not in st.session_state:
-    st.session_state.dzd = 17000.0
-
-if "last_changed" not in st.session_state:
-    st.session_state.last_changed = "cad"
-
-
-# =========================
 # FONCTIONS
 # =========================
-def update_from_cad():
-    st.session_state.last_changed = "cad"
-    st.session_state.dzd = st.session_state.cad * st.session_state.taux
+def parse_number(value):
+    if value is None:
+        return 0.0
 
+    value = str(value).strip()
+    value = value.replace(" ", "")
+    value = value.replace("\u00a0", "")
+    value = value.replace(",", ".")
 
-def update_from_dzd():
-    st.session_state.last_changed = "dzd"
-    if st.session_state.taux != 0:
-        st.session_state.cad = st.session_state.dzd / st.session_state.taux
-
-
-def update_rate():
-    if st.session_state.last_changed == "cad":
-        update_from_cad()
-    else:
-        update_from_dzd()
-
-
-def format_cad(value):
-    # CAD sans centimes, avec séparateur si gros montant
-    return f"{int(round(value)):,} CAD"
+    try:
+        return float(value)
+    except:
+        return 0.0
 
 
 def format_dzd(value):
-    # DZD avec centimes seulement si nécessaire
-    if abs(value - round(value)) < 0.005:
-        return f"{int(round(value)):,} DZD"
-    return f"{value:,.2f} DZD"
+    # Exemple : 234 860,87
+    return f"{value:,.2f}".replace(",", " ").replace(".", ",")
+
+
+def format_cad(value):
+    # Exemple : 2500
+    return str(int(round(value)))
+
+
+# =========================
+# SESSION STATE
+# =========================
+if "taux" not in st.session_state:
+    st.session_state.taux = "170"
+
+if "dzd" not in st.session_state:
+    st.session_state.dzd = "17000,00"
+
+if "cad" not in st.session_state:
+    st.session_state.cad = "100"
+
+if "last_changed" not in st.session_state:
+    st.session_state.last_changed = "dzd"
+
+
+def update_from_dzd():
+    taux = parse_number(st.session_state.taux)
+    dzd = parse_number(st.session_state.dzd)
+
+    if taux > 0:
+        cad = dzd / taux
+        st.session_state.cad = format_cad(cad)
+
+    st.session_state.last_changed = "dzd"
+
+
+def update_from_cad():
+    taux = parse_number(st.session_state.taux)
+    cad = parse_number(st.session_state.cad)
+
+    dzd = cad * taux
+    st.session_state.dzd = format_dzd(dzd)
+
+    st.session_state.last_changed = "cad"
+
+
+def update_from_taux():
+    if st.session_state.last_changed == "dzd":
+        update_from_dzd()
+    else:
+        update_from_cad()
 
 
 # =========================
@@ -137,59 +185,78 @@ def format_dzd(value):
 # =========================
 st.title("Convertisseur CAD ↔ DZD")
 
-st.markdown("<div class='field-label'>Taux de change</div>", unsafe_allow_html=True)
-st.number_input(
-    label="Taux de change",
-    value=st.session_state.taux,
-    step=1.0,
-    format="%.0f",
-    key="taux",
-    label_visibility="collapsed",
-    on_change=update_rate
-)
+taux_value = parse_number(st.session_state.taux)
+
+if taux_value > 0:
+    inverse_rate = 1 / taux_value
+else:
+    inverse_rate = 0
 
 st.markdown(
-    f"<div class='info-rate'>1 CAD = {st.session_state.taux:.0f} DZD</div>",
+    f"""
+    <div class="rate-box">
+        Taux de change moyen du marché<br>
+        1 CAD = {format_dzd(taux_value)} DZD<br>
+        1 DZD = {inverse_rate:.5f} CAD
+    </div>
+    """,
     unsafe_allow_html=True
 )
 
-col1, col2, col3 = st.columns([3, 1, 3])
+# TAUX
+st.markdown("<div class='field-title'>Taux</div>", unsafe_allow_html=True)
+
+st.text_input(
+    "Taux",
+    key="taux",
+    label_visibility="collapsed",
+    on_change=update_from_taux
+)
+
+# DZD INPUT
+st.markdown("<div class='field-title'>Montant</div>", unsafe_allow_html=True)
+
+col1, col2 = st.columns([4, 1])
 
 with col1:
-    st.markdown("<div class='field-label'>CAD</div>", unsafe_allow_html=True)
-    st.number_input(
-        label="CAD",
-        min_value=0.0,
-        step=1.0,
-        format="%.0f",
-        key="cad",
-        label_visibility="collapsed",
-        on_change=update_from_cad
-    )
-
-with col2:
-    st.markdown("<div class='arrow'>↔️</div>", unsafe_allow_html=True)
-
-with col3:
-    st.markdown("<div class='field-label'>DZD</div>", unsafe_allow_html=True)
-    st.number_input(
-        label="DZD",
-        min_value=0.0,
-        step=1.0,
-        format="%.0f",
+    st.text_input(
+        "DZD",
         key="dzd",
         label_visibility="collapsed",
         on_change=update_from_dzd
     )
 
-# =========================
-# AFFICHAGE RÉSULTATS
-# =========================
+with col2:
+    st.markdown("<div class='currency-badge'>🇩🇿 DZD</div>", unsafe_allow_html=True)
+
+# FLÈCHE
+st.markdown("<div class='arrow-circle'>↕</div>", unsafe_allow_html=True)
+
+# CAD INPUT
+st.markdown("<div class='field-title'>Vers</div>", unsafe_allow_html=True)
+
+col3, col4 = st.columns([4, 1])
+
+with col3:
+    st.text_input(
+        "CAD",
+        key="cad",
+        label_visibility="collapsed",
+        on_change=update_from_cad
+    )
+
+with col4:
+    st.markdown("<div class='currency-badge'>🇨🇦 CAD</div>", unsafe_allow_html=True)
+
+# RÉSULTATS
+dzd_value = parse_number(st.session_state.dzd)
+cad_value = parse_number(st.session_state.cad)
+
 st.markdown(
     f"""
-    <div class="card">
-        <div class="value">{format_dzd(st.session_state.dzd)}</div>
-        <div class="label">Montant en dinars algériens</div>
+    <div class="result-card">
+        <div class="result-value">{format_dzd(dzd_value)} DZD</div>
+        <div class="result-label">Montant en dinars algériens</div>
     </div>
     """,
     unsafe_allow_html=True
@@ -197,17 +264,15 @@ st.markdown(
 
 st.markdown(
     f"""
-    <div class="card">
-        <div class="value">{format_cad(st.session_state.cad)}</div>
-        <div class="label">Montant en dollars canadiens</div>
+    <div class="result-card">
+        <div class="result-value">{format_cad(cad_value)} CAD</div>
+        <div class="result-label">Montant en dollars canadiens</div>
     </div>
     """,
     unsafe_allow_html=True
 )
 
-# =========================
 # SIGNATURE
-# =========================
 st.markdown(
     "<hr><center style='color:#00E676;'>💻 Développé par M. Madani</center>",
     unsafe_allow_html=True
