@@ -91,7 +91,7 @@ st.markdown(f"""
 # ✅ AFFICHAGE PREMIUM (CARTE 2)
 st.markdown(f"""
 <div class="card">
-    <div class="value">{cad_inverse:,.0f} CAD</div>
+    <div class="value">{(cad_inverse)} CAD</div>
     <div class="label">Conversion inverse immédiate</div>
 </div>
 """, unsafe_allow_html=True)
