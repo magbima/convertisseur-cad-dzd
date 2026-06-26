@@ -71,7 +71,7 @@ with col1:
 
 with col2:
     taux = st.number_input(
-        "📊 Taux",
+        " Taux",
         value=170.0,
         step=1.0
     )
@@ -96,9 +96,6 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-# ✅ RESET
-if st.button("🔄 Réinitialiser taux"):
-    st.rerun()
 
 # ✅ SIGNATURE
 st.markdown(
