@@ -83,7 +83,7 @@ cad_inverse = dzd / taux if taux != 0 else 0
 # ✅ AFFICHAGE PREMIUM (CARTE 1)
 st.markdown(f"""
 <div class="card">
-    <div class="value">{dzd:,.2f} DZD</div>
+    <div class="value">{dzd:,.0f} DZD</div>
     <div class="label">Équivalent en dinars algériens</div>
 </div>
 """, unsafe_allow_html=True)
