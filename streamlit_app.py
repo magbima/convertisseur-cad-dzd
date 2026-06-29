@@ -289,6 +289,6 @@ st.markdown(
 
 # SIGNATURE
 st.markdown(
-    "<hr><center style='color:#00E676;'>💻 Développé par M. Madani</center>",
+    "<hr><center style='color:#00E676;'>💻 Développé par M. M</center>",
     unsafe_allow_html=True
 )
